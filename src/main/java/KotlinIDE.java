@@ -27,6 +27,9 @@ public class KotlinIDE extends JFrame {
 
     private ScriptExecutor scriptExecutor;
     private SyntaxHighlighter syntaxHighlighter;
+    private KotlinAnalyzer kotlinAnalyzer;
+    private InspectionPanel inspectionPanel;
+    private CodeHighlighter codeHighlighter;
     
     // Pattern to match error locations: filename:line:column
     private static final Pattern ERROR_LOCATION_PATTERN = Pattern.compile("(\\w+\\.kts):(\\d+):(\\d+)");
@@ -51,8 +54,9 @@ public class KotlinIDE extends JFrame {
         syntaxHighlighter = new SyntaxHighlighter(editorPane);
 
         // Initialize analysis components
-//        kotlinAnalyzer = new KotlinAnalyzer();
-//        inspectionPanel = new InspectionPanel(editorPane);
+        kotlinAnalyzer = new KotlinAnalyzer();
+        inspectionPanel = new InspectionPanel(editorPane);
+        codeHighlighter = new CodeHighlighter(editorPane);
 
         lineNumberArea = new JTextArea("1");
         lineNumberArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
@@ -138,6 +142,11 @@ public class KotlinIDE extends JFrame {
 
         add(controlPanel, BorderLayout.NORTH);
 
+        // Main split pane for editor/output and inspection panel
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        mainSplitPane.setResizeWeight(0.8);
+        mainSplitPane.setBackground(Color.DARK_GRAY);
+
         // Split pane for script editor and script output
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setResizeWeight(0.5);
@@ -199,7 +208,12 @@ public class KotlinIDE extends JFrame {
         splitPane.setLeftComponent(editorPanel);
         splitPane.setRightComponent(outputPanel);
 
-        add(splitPane, BorderLayout.CENTER);
+        // Add inspection panel at the bottom
+        mainSplitPane.setTopComponent(splitPane);
+        mainSplitPane.setBottomComponent(inspectionPanel);
+        mainSplitPane.setDividerLocation(600); // Give more space to editor/output
+
+        add(mainSplitPane, BorderLayout.CENTER);
     }
 
     private void updateLineNumbers() {
@@ -230,11 +244,13 @@ public class KotlinIDE extends JFrame {
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 updateLineNumbers();
+                triggerAnalysis();
             }
 
             @Override
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
                 updateLineNumbers();
+                triggerAnalysis();
             }
 
             @Override
@@ -246,6 +262,21 @@ public class KotlinIDE extends JFrame {
         runButton.addActionListener(e -> runScript());
         stopButton.addActionListener(e -> stopScript());
         clearButton.addActionListener(e -> outputPane.setText(""));
+    }
+    
+    private void triggerAnalysis() {
+        String code = editorPane.getText();
+        
+        // Analyze asynchronously with debouncing
+        kotlinAnalyzer.analyzeAsync(code, result -> {
+            SwingUtilities.invokeLater(() -> {
+                // Update inspection panel
+                inspectionPanel.updateInspections(result);
+                
+                // Apply squiggly underlines
+                codeHighlighter.applySquiggles(result);
+            });
+        });
     }
 
     private void runScript() {
