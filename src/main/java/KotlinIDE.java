@@ -8,6 +8,8 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class KotlinIDE extends JFrame {
     private JTextPane editorPane;
@@ -25,6 +27,9 @@ public class KotlinIDE extends JFrame {
 
     private ScriptExecutor scriptExecutor;
     private SyntaxHighlighter syntaxHighlighter;
+    
+    // Pattern to match error locations: filename:line:column
+    private static final Pattern ERROR_LOCATION_PATTERN = Pattern.compile("(\\w+\\.kts):(\\d+):(\\d+)");
 
     public KotlinIDE() {
         setTitle("Kotlin IDE");
@@ -67,14 +72,14 @@ public class KotlinIDE extends JFrame {
         stdoutStyle = new SimpleAttributeSet();
         StyleConstants.setForeground(stdoutStyle, Color.WHITE);
         stderrStyle = new SimpleAttributeSet();
-        StyleConstants.setForeground(stderrStyle, Color.RED); // Red color for errors
+        StyleConstants.setForeground(stderrStyle, Color.RED);
 
         // Make error locations clickable
         outputPane.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
-//                    handleOutputClick(e.getPoint());
+                    handleOutputClick(e.getPoint());
                 }
             }
         });
@@ -326,6 +331,85 @@ public class KotlinIDE extends JFrame {
             statusLabel.setForeground(Color.RED);
             runButton.setEnabled(true);
             stopButton.setEnabled(false);
+        }
+    }
+    
+    private void handleOutputClick(Point point) {
+        try {
+            int offset = outputPane.viewToModel2D(point);
+            StyledDocument doc = outputPane.getStyledDocument();
+            
+            // Find the line containing the click
+            String text = doc.getText(0, doc.getLength());
+            int lineStart = text.lastIndexOf('\n', offset - 1) + 1;
+            int lineEnd = text.indexOf('\n', offset);
+            if (lineEnd == -1) {
+                lineEnd = text.length();
+            }
+            
+            String line = text.substring(lineStart, lineEnd);
+            
+            // Check if the line matches error pattern (e.g., "tmp.kts:5:10")
+            Matcher matcher = ERROR_LOCATION_PATTERN.matcher(line);
+            if (matcher.find()) {
+                int errorLine = Integer.parseInt(matcher.group(2));
+                int errorColumn = Integer.parseInt(matcher.group(3));
+                
+                navigateToPosition(errorLine, errorColumn);
+            }
+        } catch (Exception ex) {
+            // Ignore clicks that don't match error pattern
+        }
+    }
+    
+    private void navigateToPosition(int line, int column) {
+        try {
+            String text = editorPane.getText();
+            String[] lines = text.split("\n", -1);
+            
+            if (line < 1 || line > lines.length) {
+                return;
+            }
+            
+            // Calculate offset
+            int offset = 0;
+            for (int i = 0; i < line - 1; i++) {
+                offset += lines[i].length() + 1; // +1 for newline
+            }
+            offset += Math.max(0, Math.min(column - 1, lines[line - 1].length()));
+            
+            // Set caret position and scroll to it
+            editorPane.setCaretPosition(offset);
+            editorPane.requestFocusInWindow();
+            
+            // Highlight the line briefly
+            highlightErrorLine(line);
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    private void highlightErrorLine(int lineNumber) {
+        try {
+            String text = editorPane.getText();
+            String[] lines = text.split("\n", -1);
+            
+            if (lineNumber < 1 || lineNumber > lines.length) {
+                return;
+            }
+            
+            int offset = 0;
+            for (int i = 0; i < lineNumber - 1; i++) {
+                offset += lines[i].length() + 1;
+            }
+            
+            final int finalOffset = offset;
+            int lineLength = lines[lineNumber - 1].length();
+            
+            editorPane.select(offset, offset + lineLength);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
