@@ -52,8 +52,6 @@ public class KotlinIDE extends JFrame {
 
         // Initialize analysis components
 //        kotlinAnalyzer = new KotlinAnalyzer();
-//        completionEngine = new CompletionEngine();
-//        completionPopup = new CompletionPopup(this, editorPane);
 //        inspectionPanel = new InspectionPanel(editorPane);
 
         lineNumberArea = new JTextArea("1");
