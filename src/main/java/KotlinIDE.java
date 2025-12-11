@@ -117,17 +117,7 @@ public class KotlinIDE extends JFrame {
         exitCodeLabel.setForeground(Color.WHITE);
 
         // Add sample script
-        editorPane.setText(
-                "// Kotlin Script Example\n" +
-                        "println(\"Hello from Kotlin!\")\n" +
-                        "\n" +
-                        "for (i in 1..5) {\n" +
-                        "    println(\"Count: $i\")\n" +
-                        "    Thread.sleep(500)\n" +
-                        "}\n" +
-                        "\n" +
-                        "println(\"Done!\")"
-        );
+        editorPane.setText("// Kotlin Script Example\n");
 
         updateLineNumbers();
     }
