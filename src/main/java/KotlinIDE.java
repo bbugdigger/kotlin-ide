@@ -160,7 +160,7 @@ public class KotlinIDE extends JFrame {
                 TitledBorder.LEFT,
                 TitledBorder.TOP,
                 new Font("Arial", Font.BOLD, 12),
-                new Color(200, 200, 200)  // Light text for title
+                Color.WHITE
         );
         editorPanel.setBorder(editorBorder);
 
@@ -300,14 +300,14 @@ public class KotlinIDE extends JFrame {
                     runButton.setEnabled(true);
                     stopButton.setEnabled(false);
                     statusLabel.setText("Finished");
-                    statusLabel.setForeground(Color.GRAY);
+                    statusLabel.setForeground(Color.WHITE);
 
                     if (exitCode == 0) {
-                        exitCodeLabel.setText("Exit Code: 0 (Success)");
-                        exitCodeLabel.setForeground(new Color(76, 175, 80));
+                        exitCodeLabel.setText("Exit Code: 0");
+                        exitCodeLabel.setForeground(Color.GREEN);
                     } else {
-                        exitCodeLabel.setText("Exit Code: " + exitCode + " (Error)");
-                        exitCodeLabel.setForeground(new Color(244, 67, 54));
+                        exitCodeLabel.setText("Exit Code: " + exitCode);
+                        exitCodeLabel.setForeground(Color.RED);
                     }
 
                     appendToOutput("\n>>> Script finished with exit code: " + exitCode + "\n", stdoutStyle);
@@ -321,7 +321,7 @@ public class KotlinIDE extends JFrame {
     private void stopScript() {
         if (scriptExecutor != null) {
             scriptExecutor.stop();
-            appendToOutput("\n>>> Script stopped\n", stdoutStyle);
+            appendToOutput("\n>>> Script execution stopped\n", stderrStyle);
             statusLabel.setText("Stopped");
             statusLabel.setForeground(Color.RED);
             runButton.setEnabled(true);
