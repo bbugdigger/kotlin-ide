@@ -122,9 +122,9 @@ public class InspectionPanel extends JPanel {
     
     private String getIconForSeverity(Diagnostic.Severity severity) {
         switch (severity) {
-            case ERROR:   return "❌";
-            case WARNING: return "⚠️";
-            default:      return "•";
+            case ERROR:   return "ERROR";
+            case WARNING: return "WARNING";
+            default:      return "INFO";
         }
     }
     
