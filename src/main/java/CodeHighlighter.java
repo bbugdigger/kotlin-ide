@@ -24,8 +24,8 @@ public class CodeHighlighter {
         this.textPane = textPane;
         
         // Initialize squiggle painters
-        errorPainter = new SquiggleHighlightPainter(new Color(244, 67, 54)); // Red
-        warningPainter = new SquiggleHighlightPainter(new Color(255, 152, 0)); // Orange
+        errorPainter = new SquiggleHighlightPainter(Color.RED);
+        warningPainter = new SquiggleHighlightPainter(Color.ORANGE);
     }
     
     /**

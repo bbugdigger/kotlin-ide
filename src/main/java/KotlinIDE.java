@@ -31,8 +31,8 @@ public class KotlinIDE extends JFrame {
     private InspectionPanel inspectionPanel;
     private CodeHighlighter codeHighlighter;
     
-    // Pattern to match error locations: filename:line:column
-    private static final Pattern ERROR_LOCATION_PATTERN = Pattern.compile("(\\w+\\.kts):(\\d+):(\\d+)");
+    // Regex to match error locations: filename:line:column
+    private static final Pattern ERROR_LOCATION_PATTERN = Pattern.compile("(\\\\w+\\\\.kts):(\\\\d+):(\\\\d+)");
 
     public KotlinIDE() {
         setTitle("Kotlin IDE");
@@ -120,8 +120,7 @@ public class KotlinIDE extends JFrame {
         exitCodeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         exitCodeLabel.setForeground(Color.WHITE);
 
-        // Add sample script
-        editorPane.setText("// Kotlin Script Example\n");
+        editorPane.setText("// Add Kotlin Script Below...\n");
 
         updateLineNumbers();
     }

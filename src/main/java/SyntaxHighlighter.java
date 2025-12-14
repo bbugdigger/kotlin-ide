@@ -46,18 +46,18 @@ public class SyntaxHighlighter {
 
         // Create styles for dark theme
         defaultStyle = textPane.addStyle("Default", null);
-        StyleConstants.setForeground(defaultStyle, new Color(220, 220, 220));  // Light gray
+        StyleConstants.setForeground(defaultStyle, Color.LIGHT_GRAY);
 
         keywordStyle = textPane.addStyle("Keyword", null);
-        StyleConstants.setForeground(keywordStyle, new Color(86, 156, 214));  // Light blue
+        StyleConstants.setForeground(keywordStyle, Color.BLUE);
         StyleConstants.setBold(keywordStyle, true);
 
         commentStyle = textPane.addStyle("Comment", null);
-        StyleConstants.setForeground(commentStyle, new Color(106, 153, 85));  // Light green
+        StyleConstants.setForeground(commentStyle, Color.GREEN);
         StyleConstants.setItalic(commentStyle, true);
 
         stringStyle = textPane.addStyle("String", null);
-        StyleConstants.setForeground(stringStyle, new Color(206, 145, 120));  // Light orange
+        StyleConstants.setForeground(stringStyle, Color.ORANGE);
 
         // Attach document listener
         document.addDocumentListener(new javax.swing.event.DocumentListener() {
