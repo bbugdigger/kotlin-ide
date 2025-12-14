@@ -121,19 +121,10 @@ public class CodeHighlighter {
         
         private void drawSquiggle(Graphics2D g2d, int x, int y, int width) {
             g2d.setColor(color);
-            g2d.setStroke(new BasicStroke(1.0f));
-            
-            // Draw wavy line
-            int amplitude = 2;
-            int frequency = 4;
-            
-            for (int i = 0; i < width; i += frequency) {
-                int yOffset = (i / frequency) % 2 == 0 ? 0 : amplitude;
-                int nextI = Math.min(i + frequency, width);
-                int nextYOffset = ((i + frequency) / frequency) % 2 == 0 ? 0 : amplitude;
-                
-                g2d.drawLine(x + i, y + yOffset, x + nextI, y + nextYOffset);
-            }
+            g2d.setStroke(new BasicStroke(1.5f));
+
+            // Draw straight underline
+            g2d.drawLine(x, y, x + width, y);
         }
     }
 }

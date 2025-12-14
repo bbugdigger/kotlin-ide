@@ -32,7 +32,7 @@ public class KotlinIDE extends JFrame {
     private CodeHighlighter codeHighlighter;
     
     // Regex to match error locations: filename:line:column
-    private static final Pattern ERROR_LOCATION_PATTERN = Pattern.compile("(\\\\w+\\\\.kts):(\\\\d+):(\\\\d+)");
+    private static final Pattern ERROR_LOCATION_PATTERN = Pattern.compile("(\\w+\\.kts):(\\d+):(\\d+)");
 
     public KotlinIDE() {
         setTitle("Kotlin IDE");
