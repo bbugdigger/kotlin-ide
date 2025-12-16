@@ -44,7 +44,7 @@ public class SyntaxHighlighter {
         StyleConstants.setItalic(commentStyle, true);
 
         stringStyle = textPane.addStyle("String", null);
-        StyleConstants.setForeground(stringStyle, Color.YELLOW);
+        StyleConstants.setForeground(stringStyle, Color.ORANGE);
 
         document.addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
