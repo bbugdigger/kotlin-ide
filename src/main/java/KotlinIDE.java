@@ -142,12 +142,12 @@ public class KotlinIDE extends JFrame {
 
         add(controlPanel, BorderLayout.NORTH);
 
-        // Main split pane for editor/output and inspection panel
+        // First pane split is for editor/output and inspection panel
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         mainSplitPane.setResizeWeight(0.8);
         mainSplitPane.setBackground(Color.DARK_GRAY);
 
-        // Split pane for script editor and script output
+        // Second pane split is for script editor and script output
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setResizeWeight(0.5);
         splitPane.setDividerLocation(0.5);
@@ -157,7 +157,7 @@ public class KotlinIDE extends JFrame {
         JPanel editorPanel = new JPanel(new BorderLayout());
         editorPanel.setBackground(Color.DARK_GRAY);
         TitledBorder editorBorder = BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(80, 80, 80)),
+                BorderFactory.createEmptyBorder(),
                 "Kotlin Script Editor",
                 TitledBorder.LEFT,
                 TitledBorder.TOP,
@@ -169,7 +169,6 @@ public class KotlinIDE extends JFrame {
         JPanel editorWithLines = new JPanel(new BorderLayout());
         editorWithLines.add(lineNumberArea, BorderLayout.WEST);
 
-        // checkout these scroll panes
         JScrollPane editorScroll = new JScrollPane(editorPane);
         editorScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         editorWithLines.add(editorScroll, BorderLayout.CENTER);
@@ -192,7 +191,7 @@ public class KotlinIDE extends JFrame {
         JPanel outputPanel = new JPanel(new BorderLayout());
         outputPanel.setBackground(Color.DARK_GRAY);
         TitledBorder outputBorder = BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(80, 80, 80)),
+                BorderFactory.createEmptyBorder(),
                 "Script Output",
                 TitledBorder.LEFT,
                 TitledBorder.TOP,
@@ -203,7 +202,7 @@ public class KotlinIDE extends JFrame {
 
         JScrollPane outputScroll = new JScrollPane(outputPane);
         outputScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        outputScroll.getViewport().setBackground(new Color(30, 30, 30));
+        outputScroll.getViewport().setBackground(Color.BLACK);
         outputPanel.add(outputScroll, BorderLayout.CENTER);
 
         splitPane.setLeftComponent(editorPanel);
