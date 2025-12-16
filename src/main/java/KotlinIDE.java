@@ -35,7 +35,7 @@ public class KotlinIDE extends JFrame {
     private static final Pattern ERROR_LOCATION_PATTERN = Pattern.compile("(\\w+\\.kts):(\\d+):(\\d+)");
 
     public KotlinIDE() {
-        setTitle("Kotlin IDE");
+        setTitle("Mini IntelliJ");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1500, 800);
         setLocationRelativeTo(null);
@@ -51,6 +51,7 @@ public class KotlinIDE extends JFrame {
         editorPane = new JTextPane();
         editorPane.setFont(new Font("Monospaced", Font.PLAIN, 14));
         editorPane.setBackground(Color.DARK_GRAY);
+        editorPane.setCaretColor(Color.WHITE);
         syntaxHighlighter = new SyntaxHighlighter(editorPane);
 
         // Initialize analysis components
@@ -239,7 +240,7 @@ public class KotlinIDE extends JFrame {
     }
 
     private void attachListeners() {
-        // We need to update line numbers as user types
+        // As user types the script we need to update the lines and do backend analysis
         editorPane.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {

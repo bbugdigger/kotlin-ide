@@ -71,7 +71,6 @@ public class SyntaxHighlighter {
             highlightTimer.restart();
         } else {
             highlightTimer = new javax.swing.Timer(500, e -> highlightAll());
-            highlightTimer.setRepeats(false);
             highlightTimer.start();
         }
     }
@@ -120,10 +119,9 @@ public class SyntaxHighlighter {
             int length = word.length();
 
             if (KEYWORDS.contains(word)) {
-                // Check if it's not already styled (i.e., not in a comment or string)
+                // We need to check if it's not already styled (not in a comment or string)
                 AttributeSet attrs = document.getCharacterElement(start).getAttributes();
                 Color fgColor = (Color) attrs.getAttribute(StyleConstants.Foreground);
-                // Check if it's the default light gray color (not in string/comment)
                 if (fgColor != null && fgColor.getRed() == 255 && fgColor.getGreen() == 255) {
                     document.setCharacterAttributes(start, length, keywordStyle, false);
                 }
