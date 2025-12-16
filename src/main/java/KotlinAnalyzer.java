@@ -30,9 +30,6 @@ public class KotlinAnalyzer {
         this.executorService = Executors.newSingleThreadExecutor();
     }
     
-    /**
-     * Analyze code synchronously.
-     */
     public AnalysisResult analyze(String code) {
         try {
             List<Diagnostic> diagnostics = new ArrayList<>();

@@ -9,46 +9,40 @@ import java.awt.BasicStroke;
 import java.util.*;
 import java.util.List;
 
-/**
- * Adds squiggly underlines for diagnostics (errors and warnings).
- */
 public class CodeHighlighter {
     private final JTextPane textPane;
     
-    // Squiggle painters
-    private SquiggleHighlightPainter errorPainter;
-    private SquiggleHighlightPainter warningPainter;
-    private List<Object> squiggleHighlights = new ArrayList<>();
+    // Underline painters
+    private UnderlineHighlightPainter errorPainter;
+    private UnderlineHighlightPainter warningPainter;
+    private List<Object> underlineHighlights = new ArrayList<>();
     
     public CodeHighlighter(JTextPane textPane) {
         this.textPane = textPane;
         
-        // Initialize squiggle painters
-        errorPainter = new SquiggleHighlightPainter(Color.RED);
-        warningPainter = new SquiggleHighlightPainter(Color.ORANGE);
+        // Initialize underline painters
+        errorPainter = new UnderlineHighlightPainter(Color.RED);
+        warningPainter = new UnderlineHighlightPainter(Color.YELLOW);
     }
     
-    /**
-     * Apply squiggles from analysis result.
-     */
-    public void applySquiggles(AnalysisResult result) {
+    public void applyUnderlines(AnalysisResult result) {
         if (result == null) {
-            clearSquiggles();
+            clearUnderlines();
             return;
         }
         
         SwingUtilities.invokeLater(() -> {
             try {
-                // Remove old squiggles
-                clearSquiggles();
+                // Remove old underlines
+                clearUnderlines();
                 
-                // Add new squiggles
+                // Add new underlines
                 StyledDocument document = textPane.getStyledDocument();
                 String text = document.getText(0, document.getLength());
                 Highlighter highlighter = textPane.getHighlighter();
                 
                 for (Diagnostic diag : result.getDiagnostics()) {
-                    SquiggleHighlightPainter painter = getPainterForSeverity(diag.getSeverity());
+                    UnderlineHighlightPainter painter = getPainterForSeverity(diag.getSeverity());
                     
                     int startOffset = diag.getStartOffset();
                     int endOffset = diag.getEndOffset();
@@ -56,7 +50,7 @@ public class CodeHighlighter {
                     // Validate offsets
                     if (startOffset >= 0 && endOffset <= text.length() && startOffset < endOffset) {
                         Object highlight = highlighter.addHighlight(startOffset, endOffset, painter);
-                        squiggleHighlights.add(highlight);
+                        underlineHighlights.add(highlight);
                     }
                 }
                 
@@ -66,15 +60,15 @@ public class CodeHighlighter {
         });
     }
     
-    private void clearSquiggles() {
+    private void clearUnderlines() {
         Highlighter highlighter = textPane.getHighlighter();
-        for (Object highlight : squiggleHighlights) {
+        for (Object highlight : underlineHighlights) {
             highlighter.removeHighlight(highlight);
         }
-        squiggleHighlights.clear();
+        underlineHighlights.clear();
     }
     
-    private SquiggleHighlightPainter getPainterForSeverity(Diagnostic.Severity severity) {
+    private UnderlineHighlightPainter getPainterForSeverity(Diagnostic.Severity severity) {
         switch (severity) {
             case ERROR:   return errorPainter;
             case WARNING: return warningPainter;
@@ -83,12 +77,12 @@ public class CodeHighlighter {
     }
     
     /**
-     * Custom highlighter painter for squiggly underlines.
+     * Custom highlighter painter for straight underlines.
      */
-    private static class SquiggleHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
+    private static class UnderlineHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
         private Color color;
         
-        public SquiggleHighlightPainter(Color color) {
+        public UnderlineHighlightPainter(Color color) {
             super(null);
             this.color = color;
         }
@@ -105,11 +99,11 @@ public class CodeHighlighter {
                 if (r0.y == r1.y) {
                     // Same line
                     Rectangle rect = r0.union(r1);
-                    drawSquiggle(g2d, rect.x, rect.y + rect.height - 2, rect.width);
+                    drawUnderline(g2d, rect.x, rect.y + rect.height - 2, rect.width);
                 } else {
                     // Multi-line (just draw under first line)
                     int width = bounds.getBounds().x + bounds.getBounds().width - r0.x;
-                    drawSquiggle(g2d, r0.x, r0.y + r0.height - 2, width);
+                    drawUnderline(g2d, r0.x, r0.y + r0.height - 2, width);
                 }
                 
             } catch (Exception e) {
@@ -119,11 +113,9 @@ public class CodeHighlighter {
             return null;
         }
         
-        private void drawSquiggle(Graphics2D g2d, int x, int y, int width) {
+        private void drawUnderline(Graphics2D g2d, int x, int y, int width) {
             g2d.setColor(color);
             g2d.setStroke(new BasicStroke(1.5f));
-
-            // Draw straight underline
             g2d.drawLine(x, y, x + width, y);
         }
     }

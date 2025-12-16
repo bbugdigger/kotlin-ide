@@ -6,9 +6,6 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
-/**
- * Panel showing code inspections (errors and warnings).
- */
 public class InspectionPanel extends JPanel {
     private JTable inspectionTable;
     private InspectionTableModel tableModel;
@@ -25,10 +22,9 @@ public class InspectionPanel extends JPanel {
     }
     
     private void initComponents() {
-        // Status label showing counts
-        statusLabel = new JLabel(" No issues");
+        statusLabel = new JLabel("No issues");
         statusLabel.setFont(new Font("Arial", Font.BOLD, 12));
-        statusLabel.setForeground(new Color(200, 200, 200));
+        statusLabel.setForeground(Color.WHITE);
         statusLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
         
         // Table for inspections
@@ -37,7 +33,7 @@ public class InspectionPanel extends JPanel {
         
         // Dark theme styling
         inspectionTable.setBackground(new Color(43, 43, 43));
-        inspectionTable.setForeground(new Color(220, 220, 220));
+        inspectionTable.setForeground(Color.WHITE);
         inspectionTable.setGridColor(new Color(80, 80, 80));
         inspectionTable.setSelectionBackground(new Color(75, 110, 175));
         inspectionTable.setSelectionForeground(Color.WHITE);
@@ -46,7 +42,7 @@ public class InspectionPanel extends JPanel {
         inspectionTable.setShowGrid(true);
         
         // Column widths
-        inspectionTable.getColumnModel().getColumn(0).setPreferredWidth(30);  // Icon
+        inspectionTable.getColumnModel().getColumn(0).setPreferredWidth(30);  // Severity
         inspectionTable.getColumnModel().getColumn(1).setPreferredWidth(50);  // Line
         inspectionTable.getColumnModel().getColumn(2).setPreferredWidth(300); // Message
         
@@ -61,7 +57,7 @@ public class InspectionPanel extends JPanel {
                 // Dark theme colors
                 if (!isSelected) {
                     label.setBackground(new Color(43, 43, 43));
-                    label.setForeground(new Color(220, 220, 220));
+                    label.setForeground(Color.WHITE);
                 }
                 
                 // Icon column
@@ -130,22 +126,13 @@ public class InspectionPanel extends JPanel {
     
     private Color getColorForSeverity(Diagnostic.Severity severity) {
         switch (severity) {
-            case ERROR:   return new Color(244, 67, 54);   // Red
-            case WARNING: return new Color(255, 152, 0);   // Orange
-            default:      return new Color(220, 220, 220); // Default light gray
+            case ERROR:   return Color.RED;   // Red
+            case WARNING: return Color.YELLOW;   // Orange
+            default:      return Color.WHITE; // Default light gray
         }
     }
     
-    /**
-     * Update inspections from analysis result.
-     */
     public void updateInspections(AnalysisResult result) {
-        if (result == null) {
-            tableModel.clear();
-            statusLabel.setText(" No analysis available");
-            return;
-        }
-        
         List<Diagnostic> diagnostics = result.getDiagnostics();
         tableModel.setDiagnostics(diagnostics);
         
@@ -154,23 +141,23 @@ public class InspectionPanel extends JPanel {
         int warnings = result.getWarningCount();
         
         if (errors == 0 && warnings == 0) {
-            statusLabel.setText(" ✓ No issues found");
-            statusLabel.setForeground(new Color(76, 175, 80)); // Green
+            statusLabel.setText("No issues found");
+            statusLabel.setForeground(Color.GREEN);
         } else {
             StringBuilder sb = new StringBuilder(" ");
             if (errors > 0) {
-                sb.append("❌ ").append(errors).append(" error").append(errors > 1 ? "s" : "");
+                sb.append(errors).append(" error").append(errors > 1 ? "s" : "");
             }
             if (warnings > 0) {
                 if (errors > 0) sb.append("  ");
-                sb.append("⚠️ ").append(warnings).append(" warning").append(warnings > 1 ? "s" : "");
+                sb.append(warnings).append(" warning").append(warnings > 1 ? "s" : "");
             }
             statusLabel.setText(sb.toString());
             
             if (errors > 0) {
-                statusLabel.setForeground(new Color(244, 67, 54)); // Red
+                statusLabel.setForeground(Color.RED);
             } else {
-                statusLabel.setForeground(new Color(255, 152, 0)); // Orange
+                statusLabel.setForeground(Color.YELLOW);
             }
         }
     }

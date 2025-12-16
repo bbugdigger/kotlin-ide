@@ -271,7 +271,7 @@ public class KotlinIDE extends JFrame {
         kotlinAnalyzer.analyzeAsync(code, result -> {
             SwingUtilities.invokeLater(() -> {
                 inspectionPanel.updateInspections(result);
-                codeHighlighter.applySquiggles(result);
+                codeHighlighter.applyUnderlines(result);
             });
         });
     }
