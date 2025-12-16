@@ -16,7 +16,7 @@ public class KotlinAnalyzer {
     private static final Pattern VAR_USAGE_PATTERN = Pattern.compile("\\b(\\w+)\\b");
     
     private static final Set<String> STDLIB_FUNCTIONS = new HashSet<>(Arrays.asList(
-        "println", "print"
+        "println", "print", "listOf", "forEach"
     ));
     
     private static final Set<String> KEYWORDS = new HashSet<>(Arrays.asList(
