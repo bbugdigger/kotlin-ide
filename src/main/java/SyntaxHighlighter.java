@@ -77,7 +77,6 @@ public class SyntaxHighlighter {
     }
 
     private void highlightAll() {
-        SwingUtilities.invokeLater(() -> {
             try {
                 String text = document.getText(0, document.getLength());
 
@@ -101,7 +100,6 @@ public class SyntaxHighlighter {
             } catch (BadLocationException ex) {
                 ex.printStackTrace();
             }
-        });
     }
 
     private void highlightPattern(String text, Pattern pattern, Style style) {
@@ -126,7 +124,7 @@ public class SyntaxHighlighter {
                 AttributeSet attrs = document.getCharacterElement(start).getAttributes();
                 Color fgColor = (Color) attrs.getAttribute(StyleConstants.Foreground);
                 // Check if it's the default light gray color (not in string/comment)
-                if (fgColor != null && fgColor.getRed() == 220 && fgColor.getGreen() == 220) {
+                if (fgColor != null && fgColor.getRed() == 255 && fgColor.getGreen() == 255) {
                     document.setCharacterAttributes(start, length, keywordStyle, false);
                 }
             }

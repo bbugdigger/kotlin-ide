@@ -107,7 +107,7 @@ public class KotlinIDE extends JFrame {
         clearButton = new JButton("Clear");
         clearButton.setFont(new Font("Arial", Font.BOLD, 12));
         clearButton.setBackground(Color.RED);
-        clearButton.setForeground(Color.WHITE);  // White text
+        clearButton.setForeground(Color.WHITE);
         clearButton.setFocusPainted(false);
         clearButton.setBorderPainted(false);
         clearButton.setOpaque(true);
@@ -168,6 +168,7 @@ public class KotlinIDE extends JFrame {
         JPanel editorWithLines = new JPanel(new BorderLayout());
         editorWithLines.add(lineNumberArea, BorderLayout.WEST);
 
+        // checkout these scroll panes
         JScrollPane editorScroll = new JScrollPane(editorPane);
         editorScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         editorWithLines.add(editorScroll, BorderLayout.CENTER);
@@ -195,7 +196,7 @@ public class KotlinIDE extends JFrame {
                 TitledBorder.LEFT,
                 TitledBorder.TOP,
                 new Font("Arial", Font.BOLD, 12),
-                new Color(200, 200, 200)  // Light text for title
+                Color.WHITE
         );
         outputPanel.setBorder(outputBorder);
 
@@ -207,10 +208,10 @@ public class KotlinIDE extends JFrame {
         splitPane.setLeftComponent(editorPanel);
         splitPane.setRightComponent(outputPanel);
 
-        // Add inspection panel at the bottom
+        // Inspection panel goes at the bottom
         mainSplitPane.setTopComponent(splitPane);
         mainSplitPane.setBottomComponent(inspectionPanel);
-        mainSplitPane.setDividerLocation(600); // Give more space to editor/output
+        mainSplitPane.setDividerLocation(500);
 
         add(mainSplitPane, BorderLayout.CENTER);
     }
