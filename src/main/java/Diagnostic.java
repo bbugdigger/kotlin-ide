@@ -1,10 +1,7 @@
-/**
- * Represents a diagnostic issue (error or warning).
- */
 public class Diagnostic {
     public enum Severity {
-        ERROR,    // Red squiggle
-        WARNING   // Yellow squiggle
+        ERROR,
+        WARNING
     }
     
     private final Severity severity;

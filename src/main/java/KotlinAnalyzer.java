@@ -46,7 +46,6 @@ public class KotlinAnalyzer {
     
     public KotlinAnalyzer() {
         this.executorService = Executors.newSingleThreadExecutor();
-        System.out.println("KotlinAnalyzer initialized");
     }
     
     /**
