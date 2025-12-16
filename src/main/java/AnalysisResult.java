@@ -1,8 +1,5 @@
 import java.util.*;
 
-/**
- * Container for analysis results.
- */
 public class AnalysisResult {
     private final List<Diagnostic> diagnostics;
     
