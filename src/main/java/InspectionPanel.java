@@ -7,6 +7,13 @@ import java.util.*;
 import java.util.List;
 
 public class InspectionPanel extends JPanel {
+    // Color constants
+    private static final Color BACKGROUND_DARK = new Color(60, 63, 65);
+    private static final Color TABLE_BACKGROUND = new Color(43, 43, 43);
+    private static final Color GRID_COLOR = new Color(80, 80, 80);
+    private static final Color SELECTION_BACKGROUND = new Color(75, 110, 175);
+    private static final Color TITLE_COLOR = new Color(200, 200, 200);
+    
     private JTable inspectionTable;
     private InspectionTableModel tableModel;
     private JLabel statusLabel;
@@ -16,13 +23,14 @@ public class InspectionPanel extends JPanel {
         this.editorPane = editorPane;
         
         setLayout(new BorderLayout());
-        setBackground(new Color(60, 63, 65));
+        setBackground(BACKGROUND_DARK);
         
         initComponents();
     }
     
     private void initComponents() {
-        statusLabel = new JLabel("No issues");
+        // Status label showing counts
+        statusLabel = new JLabel(" No issues");
         statusLabel.setFont(new Font("Arial", Font.BOLD, 12));
         statusLabel.setForeground(Color.WHITE);
         statusLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -32,10 +40,10 @@ public class InspectionPanel extends JPanel {
         inspectionTable = new JTable(tableModel);
         
         // Dark theme styling
-        inspectionTable.setBackground(new Color(43, 43, 43));
+        inspectionTable.setBackground(TABLE_BACKGROUND);
         inspectionTable.setForeground(Color.WHITE);
-        inspectionTable.setGridColor(new Color(80, 80, 80));
-        inspectionTable.setSelectionBackground(new Color(75, 110, 175));
+        inspectionTable.setGridColor(GRID_COLOR);
+        inspectionTable.setSelectionBackground(SELECTION_BACKGROUND);
         inspectionTable.setSelectionForeground(Color.WHITE);
         inspectionTable.setFont(new Font("Monospaced", Font.PLAIN, 12));
         inspectionTable.setRowHeight(25);
@@ -56,7 +64,7 @@ public class InspectionPanel extends JPanel {
                 
                 // Dark theme colors
                 if (!isSelected) {
-                    label.setBackground(new Color(43, 43, 43));
+                    label.setBackground(TABLE_BACKGROUND);
                     label.setForeground(Color.WHITE);
                 }
                 
@@ -97,8 +105,8 @@ public class InspectionPanel extends JPanel {
         });
         
         JScrollPane scrollPane = new JScrollPane(inspectionTable);
-        scrollPane.setBorder(new LineBorder(new Color(80, 80, 80)));
-        scrollPane.getViewport().setBackground(new Color(43, 43, 43));
+        scrollPane.setBorder(new LineBorder(GRID_COLOR));
+        scrollPane.getViewport().setBackground(TABLE_BACKGROUND);
         
         // Layout
         add(statusLabel, BorderLayout.NORTH);
@@ -106,12 +114,12 @@ public class InspectionPanel extends JPanel {
         
         // Border with title
         TitledBorder border = BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(80, 80, 80)),
+            BorderFactory.createLineBorder(GRID_COLOR),
             "Inspections",
             TitledBorder.LEFT,
             TitledBorder.TOP,
             new Font("Arial", Font.BOLD, 12),
-            new Color(200, 200, 200)
+            TITLE_COLOR
         );
         setBorder(border);
     }
@@ -133,6 +141,12 @@ public class InspectionPanel extends JPanel {
     }
     
     public void updateInspections(AnalysisResult result) {
+        if (result == null) {
+            tableModel.clear();
+            statusLabel.setText(" No analysis available");
+            return;
+        }
+        
         List<Diagnostic> diagnostics = result.getDiagnostics();
         tableModel.setDiagnostics(diagnostics);
         
@@ -142,7 +156,7 @@ public class InspectionPanel extends JPanel {
         
         if (errors == 0 && warnings == 0) {
             statusLabel.setText("No issues found");
-            statusLabel.setForeground(Color.GREEN);
+            statusLabel.setForeground(Color.GREEN); // Green
         } else {
             StringBuilder sb = new StringBuilder(" ");
             if (errors > 0) {
@@ -289,8 +303,8 @@ public class InspectionPanel extends JPanel {
         
         private String getIconForSeverity(Diagnostic.Severity severity) {
             switch (severity) {
-                case ERROR:   return "❌";
-                case WARNING: return "⚠️";
+                case ERROR:   return "ERROR";
+                case WARNING: return "WARNING";
                 default:      return "•";
             }
         }

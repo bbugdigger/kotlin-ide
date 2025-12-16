@@ -12,6 +12,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class KotlinIDE extends JFrame {
+    private static final Color BACKGROUND_COLOR = Color.DARK_GRAY;
+    private static final Color TEXT_COLOR = Color.WHITE;
+    private static final Color OUTPUT_BACKGROUND = Color.BLACK;
+    private static final Color SUCCESS_COLOR = Color.GREEN;
+    private static final Color ERROR_COLOR = Color.RED;
+    
     private JTextPane editorPane;
     private JTextPane outputPane;
     private JTextArea lineNumberArea;
@@ -50,8 +56,8 @@ public class KotlinIDE extends JFrame {
     private void initComponents() {
         editorPane = new JTextPane();
         editorPane.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        editorPane.setBackground(Color.DARK_GRAY);
-        editorPane.setCaretColor(Color.WHITE);
+        editorPane.setBackground(BACKGROUND_COLOR);
+        editorPane.setCaretColor(TEXT_COLOR);
         syntaxHighlighter = new SyntaxHighlighter(editorPane);
 
         // Initialize analysis components
@@ -62,20 +68,20 @@ public class KotlinIDE extends JFrame {
         lineNumberArea = new JTextArea("1");
         lineNumberArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
         lineNumberArea.setEditable(false);
-        lineNumberArea.setBackground(Color.DARK_GRAY);
-        lineNumberArea.setForeground(Color.WHITE);
+        lineNumberArea.setBackground(BACKGROUND_COLOR);
+        lineNumberArea.setForeground(TEXT_COLOR);
         lineNumberArea.setBorder(new EmptyBorder(0, 5, 0, 5));
 
         outputPane = new JTextPane();
         outputPane.setFont(new Font("Monospaced", Font.PLAIN, 14));
         outputPane.setEditable(false);
-        outputPane.setBackground(Color.BLACK);
+        outputPane.setBackground(OUTPUT_BACKGROUND);
 
         // Initialize text styles for colored output
         stdoutStyle = new SimpleAttributeSet();
-        StyleConstants.setForeground(stdoutStyle, Color.WHITE);
+        StyleConstants.setForeground(stdoutStyle, TEXT_COLOR);
         stderrStyle = new SimpleAttributeSet();
-        StyleConstants.setForeground(stderrStyle, Color.RED);
+        StyleConstants.setForeground(stderrStyle, ERROR_COLOR);
 
         // Make error locations clickable
         outputPane.addMouseListener(new MouseAdapter() {
@@ -90,16 +96,16 @@ public class KotlinIDE extends JFrame {
 
         runButton = new JButton("Run");
         runButton.setFont(new Font("Arial", Font.BOLD, 14));
-        runButton.setBackground(Color.GREEN);
-        runButton.setForeground(Color.WHITE);
+        runButton.setBackground(SUCCESS_COLOR);
+        runButton.setForeground(TEXT_COLOR);
         runButton.setFocusPainted(false);
         runButton.setBorderPainted(false);
         runButton.setOpaque(true);
 
         stopButton = new JButton("Stop");
         stopButton.setFont(new Font("Arial", Font.BOLD, 14));
-        stopButton.setBackground(Color.RED);
-        stopButton.setForeground(Color.WHITE);
+        stopButton.setBackground(ERROR_COLOR);
+        stopButton.setForeground(TEXT_COLOR);
         stopButton.setFocusPainted(false);
         stopButton.setBorderPainted(false);
         stopButton.setOpaque(true);
@@ -107,19 +113,19 @@ public class KotlinIDE extends JFrame {
 
         clearButton = new JButton("Clear");
         clearButton.setFont(new Font("Arial", Font.BOLD, 12));
-        clearButton.setBackground(Color.RED);
-        clearButton.setForeground(Color.WHITE);
+        clearButton.setBackground(ERROR_COLOR);
+        clearButton.setForeground(TEXT_COLOR);
         clearButton.setFocusPainted(false);
         clearButton.setBorderPainted(false);
         clearButton.setOpaque(true);
 
         statusLabel = new JLabel(" ");
         statusLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        statusLabel.setForeground(Color.WHITE);
+        statusLabel.setForeground(TEXT_COLOR);
 
         exitCodeLabel = new JLabel(" ");
         exitCodeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        exitCodeLabel.setForeground(Color.WHITE);
+        exitCodeLabel.setForeground(TEXT_COLOR);
 
         editorPane.setText("// Add Kotlin Script Below...\n");
 
@@ -128,10 +134,10 @@ public class KotlinIDE extends JFrame {
 
     private void placeComponents() {
         setLayout(new BorderLayout(10, 10));
-        getContentPane().setBackground(Color.DARK_GRAY);
+        getContentPane().setBackground(BACKGROUND_COLOR);
 
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        controlPanel.setBackground(Color.DARK_GRAY);
+        controlPanel.setBackground(BACKGROUND_COLOR);
         controlPanel.add(runButton);
         controlPanel.add(stopButton);
         controlPanel.add(clearButton);
@@ -145,24 +151,24 @@ public class KotlinIDE extends JFrame {
         // First pane split is for editor/output and inspection panel
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         mainSplitPane.setResizeWeight(0.8);
-        mainSplitPane.setBackground(Color.DARK_GRAY);
+        mainSplitPane.setBackground(BACKGROUND_COLOR);
 
         // Second pane split is for script editor and script output
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setResizeWeight(0.5);
         splitPane.setDividerLocation(0.5);
-        splitPane.setBackground(Color.DARK_GRAY);
+        splitPane.setBackground(BACKGROUND_COLOR);
 
         // Left side: Script Editor with line numbers
         JPanel editorPanel = new JPanel(new BorderLayout());
-        editorPanel.setBackground(Color.DARK_GRAY);
+        editorPanel.setBackground(BACKGROUND_COLOR);
         TitledBorder editorBorder = BorderFactory.createTitledBorder(
                 BorderFactory.createEmptyBorder(),
                 "Kotlin Script Editor",
                 TitledBorder.LEFT,
                 TitledBorder.TOP,
                 new Font("Arial", Font.BOLD, 12),
-                Color.WHITE
+                TEXT_COLOR
         );
         editorPanel.setBorder(editorBorder);
 
@@ -189,20 +195,20 @@ public class KotlinIDE extends JFrame {
 
         // Right side: Script Output
         JPanel outputPanel = new JPanel(new BorderLayout());
-        outputPanel.setBackground(Color.DARK_GRAY);
+        outputPanel.setBackground(BACKGROUND_COLOR);
         TitledBorder outputBorder = BorderFactory.createTitledBorder(
                 BorderFactory.createEmptyBorder(),
                 "Script Output",
                 TitledBorder.LEFT,
                 TitledBorder.TOP,
                 new Font("Arial", Font.BOLD, 12),
-                Color.WHITE
+                TEXT_COLOR
         );
         outputPanel.setBorder(outputBorder);
 
         JScrollPane outputScroll = new JScrollPane(outputPane);
         outputScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        outputScroll.getViewport().setBackground(Color.BLACK);
+        outputScroll.getViewport().setBackground(OUTPUT_BACKGROUND);
         outputPanel.add(outputScroll, BorderLayout.CENTER);
 
         splitPane.setLeftComponent(editorPanel);
@@ -290,7 +296,7 @@ public class KotlinIDE extends JFrame {
         runButton.setEnabled(false);
         stopButton.setEnabled(true);
         statusLabel.setText("Running...");
-        statusLabel.setForeground(Color.GREEN);
+        statusLabel.setForeground(SUCCESS_COLOR);
         exitCodeLabel.setText(" ");
         outputPane.setText("");
         appendToOutput(">>> Starting script execution...\n\n", stdoutStyle);
@@ -317,14 +323,14 @@ public class KotlinIDE extends JFrame {
                     runButton.setEnabled(true);
                     stopButton.setEnabled(false);
                     statusLabel.setText("Finished");
-                    statusLabel.setForeground(Color.WHITE);
+                    statusLabel.setForeground(TEXT_COLOR);
 
                     if (exitCode == 0) {
                         exitCodeLabel.setText("Exit Code: 0");
-                        exitCodeLabel.setForeground(Color.GREEN);
+                        exitCodeLabel.setForeground(SUCCESS_COLOR);
                     } else {
                         exitCodeLabel.setText("Exit Code: " + exitCode);
-                        exitCodeLabel.setForeground(Color.RED);
+                        exitCodeLabel.setForeground(ERROR_COLOR);
                     }
 
                     appendToOutput("\n>>> Script finished with exit code: " + exitCode + "\n", stdoutStyle);
@@ -340,7 +346,7 @@ public class KotlinIDE extends JFrame {
             scriptExecutor.stop();
             appendToOutput("\n>>> Script execution stopped\n", stderrStyle);
             statusLabel.setText("Stopped");
-            statusLabel.setForeground(Color.RED);
+            statusLabel.setForeground(ERROR_COLOR);
             runButton.setEnabled(true);
             stopButton.setEnabled(false);
         }
