@@ -17,19 +17,10 @@ public class SyntaxHighlighter {
     private final Style stringStyle;
 
     private static final Set<String> KEYWORDS = new HashSet<>(Arrays.asList(
-            "abstract", "as", "break", "by",
-            "catch", "class", "const", "constructor", "continue",
-            "do",
-            "else", "enum", "expect",
-            "false", "final", "finally", "for", "fun",
-            "get",
-            "if", "import", "in", "inline", "interface", "is",
-            "noinline", "null",
-            "object", "open", "operator", "out", "override",
-            "package", "private", "protected", "public",
-            "return",
-            "set", "super",
-            "this", "throw", "true", "try", "val", "var","where", "while"
+            "break", "catch", "class", "const", "constructor", "continue",
+            "do", "else", "enum", "false", "finally", "for", "fun", "if", "import", "in", "inline", "interface",
+            "null", "override", "private", "protected", "public", "return", "super",
+            "this", "throw", "true", "try", "val", "var", "while"
     ));
 
     // We will be using regex to match words (potential keywords) since building the lexer, parser and then generating the AST is a bit too much work...
@@ -79,7 +70,7 @@ public class SyntaxHighlighter {
         if (highlightTimer != null && highlightTimer.isRunning()) {
             highlightTimer.restart();
         } else {
-            highlightTimer = new javax.swing.Timer(200, e -> highlightAll());
+            highlightTimer = new javax.swing.Timer(500, e -> highlightAll());
             highlightTimer.setRepeats(false);
             highlightTimer.start();
         }
