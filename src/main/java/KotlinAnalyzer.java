@@ -4,44 +4,26 @@ import java.util.function.Consumer;
 import java.util.regex.*;
 import javax.swing.Timer;
 
-/**
- * Simplified code analyzer for Kotlin scripts.
- * Detects:
- * - Unused variables
- * - Undeclared/undefined functions
- * - Unclosed strings
- */
 public class KotlinAnalyzer {
     private ExecutorService executorService;
-    private Timer debounceTimer;
+    private Timer analysisTimer;
     
-    private static final int DEBOUNCE_DELAY_MS = 300;
+    private static final int ANALYSIS_DELAY_MS = 500;
     
-    // Kotlin language patterns
     private static final Pattern VAR_PATTERN = Pattern.compile("\\b(val|var)\\s+(\\w+)\\s*[=:]");
     private static final Pattern FUN_PATTERN = Pattern.compile("\\bfun\\s+(\\w+)\\s*\\(");
     private static final Pattern CALL_PATTERN = Pattern.compile("\\b(\\w+)\\s*\\(");
     private static final Pattern VAR_USAGE_PATTERN = Pattern.compile("\\b(\\w+)\\b");
     
-    // Standard library functions
     private static final Set<String> STDLIB_FUNCTIONS = new HashSet<>(Arrays.asList(
-        "println", "print", "readLine", "require", "check", "error", "TODO",
-        "listOf", "mutableListOf", "setOf", "mutableSetOf", "mapOf", "mutableMapOf",
-        "arrayOf", "emptyList", "emptySet", "emptyMap", "lazy", "with", "apply",
-        "let", "also", "run", "takeIf", "takeUnless", "repeat", "forEach", "filter",
-        "map", "flatMap", "reduce", "fold", "any", "all", "none", "count", "find",
-        "first", "last", "single", "take", "drop", "zip", "partition", "groupBy"
+        "println", "print"
     ));
     
-    // Keywords set
     private static final Set<String> KEYWORDS = new HashSet<>(Arrays.asList(
-        "abstract", "annotation", "as", "break", "by", "catch", "class", "companion",
-        "const", "constructor", "continue", "data", "do", "else", "enum", "false",
-        "final", "finally", "for", "fun", "if", "import", "in", "init", "inline",
-        "inner", "interface", "internal", "is", "lateinit", "null", "object", "open",
-        "operator", "out", "override", "package", "private", "protected", "public",
-        "return", "sealed", "super", "suspend", "this", "throw", "true", "try",
-        "typealias", "val", "var", "when", "where", "while"
+            "break", "catch", "class", "const", "constructor", "continue",
+            "do", "else", "enum", "false", "finally", "for", "fun", "if", "import", "in", "inline", "interface",
+            "null", "override", "private", "protected", "public", "return", "super",
+            "this", "throw", "true", "try", "val", "var", "while"
     ));
     
     public KotlinAnalyzer() {
@@ -143,7 +125,7 @@ public class KotlinAnalyzer {
                         
                         diagnostics.add(new Diagnostic(
                             Diagnostic.Severity.ERROR,
-                            "Unresolved reference: " + callName,
+                            "Undefined function: " + callName,
                             lineNum + 1,
                             callMatcher.start(1) + 1,
                             startOffset,
@@ -205,17 +187,14 @@ public class KotlinAnalyzer {
         return new int[]{line, column};
     }
     
-    /**
-     * Analyze code asynchronously with debouncing.
-     */
     public void analyzeAsync(String code, Consumer<AnalysisResult> callback) {
         // Cancel previous timer
-        if (debounceTimer != null && debounceTimer.isRunning()) {
-            debounceTimer.stop();
+        if (analysisTimer != null && analysisTimer.isRunning()) {
+            analysisTimer.stop();
         }
         
         // Create new debounced timer
-        debounceTimer = new Timer(DEBOUNCE_DELAY_MS, e -> {
+        analysisTimer = new Timer(ANALYSIS_DELAY_MS, e -> {
             executorService.submit(() -> {
                 try {
                     AnalysisResult result = analyze(code);
@@ -226,16 +205,12 @@ public class KotlinAnalyzer {
                 }
             });
         });
-        debounceTimer.setRepeats(false);
-        debounceTimer.start();
+        analysisTimer.start();
     }
     
-    /**
-     * Shutdown the analyzer.
-     */
     public void shutdown() {
-        if (debounceTimer != null) {
-            debounceTimer.stop();
+        if (analysisTimer != null) {
+            analysisTimer.stop();
         }
         if (executorService != null) {
             executorService.shutdown();

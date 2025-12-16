@@ -267,13 +267,10 @@ public class KotlinIDE extends JFrame {
     private void triggerAnalysis() {
         String code = editorPane.getText();
         
-        // Analyze asynchronously with debouncing
+        // Analyze asynchronously
         kotlinAnalyzer.analyzeAsync(code, result -> {
             SwingUtilities.invokeLater(() -> {
-                // Update inspection panel
                 inspectionPanel.updateInspections(result);
-                
-                // Apply squiggly underlines
                 codeHighlighter.applySquiggles(result);
             });
         });
