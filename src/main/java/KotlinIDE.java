@@ -290,16 +290,12 @@ public class KotlinIDE extends JFrame {
             return;
         }
 
-        // Disable run button, enable stop button
         runButton.setEnabled(false);
         stopButton.setEnabled(true);
         statusLabel.setText("Running...");
-        statusLabel.setForeground(new Color(76, 175, 80));
+        statusLabel.setForeground(Color.GREEN);
         exitCodeLabel.setText(" ");
-
-        if (!outputPane.getText().isEmpty()) {
-            appendToOutput("\n" + "=".repeat(100) + "\n", stdoutStyle);
-        }
+        outputPane.setText("");
         appendToOutput(">>> Starting script execution...\n\n", stdoutStyle);
 
         // Create and start script executor
