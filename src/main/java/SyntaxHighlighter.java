@@ -10,32 +10,20 @@ import java.util.regex.Pattern;
 public class SyntaxHighlighter {
     private final JTextPane textPane;
     private final StyledDocument document;
+
     private final Style defaultStyle;
     private final Style keywordStyle;
     private final Style commentStyle;
     private final Style stringStyle;
 
-    // Kotlin keywords to highlight
     private static final Set<String> KEYWORDS = new HashSet<>(Arrays.asList(
-            "abstract", "annotation", "as", "break", "by",
-            "catch", "class", "companion", "const", "constructor", "continue",
-            "crossinline", "data", "delegate", "do",
-            "else", "enum", "expect",
-            "false", "final", "finally", "for", "fun",
-            "get",
-            "if", "import", "in", "infix", "init", "inline", "inner", "interface", "internal", "is",
-            "lateinit",
-            "noinline", "null",
-            "object", "open", "operator", "out", "override",
-            "package", "private", "protected", "public",
-            "return", "reified",
-            "sealed", "set", "super", "suspend",
-            "tailrec", "this", "throw", "true", "try", "typealias",
-            "val", "var", "vararg",
-            "when", "where", "while"
+            "break", "catch", "class", "const", "constructor", "continue",
+            "do", "else", "enum", "false", "finally", "for", "fun", "if", "import", "in", "inline", "interface",
+            "null", "override", "private", "protected", "public", "return", "super",
+            "this", "throw", "true", "try", "val", "var", "while"
     ));
 
-    // Pattern to match words (potential keywords)
+    // We will be using regex to match words (potential keywords) since building the lexer, parser and then generating the AST is a bit too much work...
     private static final Pattern WORD_PATTERN = Pattern.compile("\\b\\w+\\b");
     private static final Pattern COMMENT_PATTERN = Pattern.compile("//.*");
     private static final Pattern STRING_PATTERN = Pattern.compile("\"([^\"\\\\]|\\\\.)*\"");
@@ -44,22 +32,20 @@ public class SyntaxHighlighter {
         this.textPane = textPane;
         this.document = textPane.getStyledDocument();
 
-        // Create styles for dark theme
         defaultStyle = textPane.addStyle("Default", null);
-        StyleConstants.setForeground(defaultStyle, new Color(220, 220, 220));  // Light gray
+        StyleConstants.setForeground(defaultStyle, Color.WHITE);
 
         keywordStyle = textPane.addStyle("Keyword", null);
-        StyleConstants.setForeground(keywordStyle, new Color(86, 156, 214));  // Light blue
+        StyleConstants.setForeground(keywordStyle, Color.BLUE);
         StyleConstants.setBold(keywordStyle, true);
 
         commentStyle = textPane.addStyle("Comment", null);
-        StyleConstants.setForeground(commentStyle, new Color(106, 153, 85));  // Light green
+        StyleConstants.setForeground(commentStyle, Color.GREEN);
         StyleConstants.setItalic(commentStyle, true);
 
         stringStyle = textPane.addStyle("String", null);
-        StyleConstants.setForeground(stringStyle, new Color(206, 145, 120));  // Light orange
+        StyleConstants.setForeground(stringStyle, Color.YELLOW);
 
-        // Attach document listener
         document.addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
@@ -84,14 +70,12 @@ public class SyntaxHighlighter {
         if (highlightTimer != null && highlightTimer.isRunning()) {
             highlightTimer.restart();
         } else {
-            highlightTimer = new javax.swing.Timer(200, e -> highlightAll());
-            highlightTimer.setRepeats(false);
+            highlightTimer = new javax.swing.Timer(500, e -> highlightAll());
             highlightTimer.start();
         }
     }
 
     private void highlightAll() {
-        SwingUtilities.invokeLater(() -> {
             try {
                 String text = document.getText(0, document.getLength());
 
@@ -112,11 +96,9 @@ public class SyntaxHighlighter {
 
                 // Restore caret position
                 textPane.setCaretPosition(Math.min(caretPosition, text.length()));
-
             } catch (BadLocationException ex) {
                 ex.printStackTrace();
             }
-        });
     }
 
     private void highlightPattern(String text, Pattern pattern, Style style) {
@@ -136,13 +118,11 @@ public class SyntaxHighlighter {
             int start = matcher.start();
             int length = word.length();
 
-            // Check if this word is a keyword
             if (KEYWORDS.contains(word)) {
-                // Check if it's not already styled (i.e., not in a comment or string)
+                // We need to check if it's not already styled (not in a comment or string)
                 AttributeSet attrs = document.getCharacterElement(start).getAttributes();
                 Color fgColor = (Color) attrs.getAttribute(StyleConstants.Foreground);
-                // Check if it's the default light gray color (not in string/comment)
-                if (fgColor != null && fgColor.getRed() == 220 && fgColor.getGreen() == 220) {
+                if (fgColor != null && fgColor.getRed() == 255 && fgColor.getGreen() == 255) {
                     document.setCharacterAttributes(start, length, keywordStyle, false);
                 }
             }
