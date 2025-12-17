@@ -66,68 +66,78 @@ public class KotlinAnalyzer {
                 String line = lines[lineNum];
                 int lineOffset = getLineOffset(lines, lineNum);
                 
-                // Check for unclosed strings
-                int quoteCount = 0;
-                boolean escaped = false;
-                for (int i = 0; i < line.length(); i++) {
-                    char c = line.charAt(i);
-                    if (c == '\\' && !escaped) {
-                        escaped = true;
-                    } else if (c == '"' && !escaped) {
-                        quoteCount++;
-                    } else {
-                        escaped = false;
-                    }
-                }
+                // Skip comment lines for analysis
+                String trimmedLine = line.trim();
+                boolean isComment = trimmedLine.startsWith("//");
                 
-                // Odd number of quotes means unclosed string
-                if (quoteCount % 2 != 0) {
-                    int firstQuote = line.indexOf('"');
-                    if (firstQuote >= 0) {
-                        diagnostics.add(new Diagnostic(
-                            Diagnostic.Severity.ERROR,
-                            "Unclosed string literal",
-                            lineNum + 1,
-                            firstQuote + 1,
-                            lineOffset + firstQuote,
-                            lineOffset + line.length()
-                        ));
+                // Check for unclosed strings (skip in comments)
+                if (!isComment) {
+                    int quoteCount = 0;
+                    boolean escaped = false;
+                    for (int i = 0; i < line.length(); i++) {
+                        char c = line.charAt(i);
+                        if (c == '\\' && !escaped) {
+                            escaped = true;
+                        } else if (c == '"' && !escaped) {
+                            quoteCount++;
+                        } else {
+                            escaped = false;
+                        }
                     }
-                }
-                
-                // Track variable usage
-                Matcher usageMatcher = VAR_USAGE_PATTERN.matcher(line);
-                while (usageMatcher.find()) {
-                    String name = usageMatcher.group(1);
-                    // Don't count in variable declarations
-                    if (!line.substring(Math.max(0, usageMatcher.start() - 10), usageMatcher.start()).contains("val ") &&
-                        !line.substring(Math.max(0, usageMatcher.start() - 10), usageMatcher.start()).contains("var ")) {
-                        usedSymbols.add(name);
-                    }
-                }
-                
-                // Check for undefined function calls
-                Matcher callMatcher = CALL_PATTERN.matcher(line);
-                while (callMatcher.find()) {
-                    String callName = callMatcher.group(1);
                     
-                    // Check if it's undefined
-                    if (!KEYWORDS.contains(callName) && 
-                        !STDLIB_FUNCTIONS.contains(callName) &&
-                        !declaredFunctions.contains(callName) &&
-                        callName.matches("^[a-z].*")) { // starts with lowercase
+                    // Odd number of quotes means unclosed string
+                    if (quoteCount % 2 != 0) {
+                        int firstQuote = line.indexOf('"');
+                        if (firstQuote >= 0) {
+                            diagnostics.add(new Diagnostic(
+                                Diagnostic.Severity.ERROR,
+                                "Unclosed string literal",
+                                lineNum + 1,
+                                firstQuote + 1,
+                                lineOffset + firstQuote,
+                                lineOffset + line.length()
+                            ));
+                        }
+                    }
+                }
+                
+                // Track variable usage (skip in comments)
+                if (!isComment) {
+                    Matcher usageMatcher = VAR_USAGE_PATTERN.matcher(line);
+                    while (usageMatcher.find()) {
+                        String name = usageMatcher.group(1);
+                        // Don't count in variable declarations
+                        if (!line.substring(Math.max(0, usageMatcher.start() - 10), usageMatcher.start()).contains("val ") &&
+                            !line.substring(Math.max(0, usageMatcher.start() - 10), usageMatcher.start()).contains("var ")) {
+                            usedSymbols.add(name);
+                        }
+                    }
+                }
+                
+                // Check for undefined function calls (skip in comments)
+                if (!isComment) {
+                    Matcher callMatcher = CALL_PATTERN.matcher(line);
+                    while (callMatcher.find()) {
+                        String callName = callMatcher.group(1);
                         
-                        int startOffset = lineOffset + callMatcher.start(1);
-                        int endOffset = lineOffset + callMatcher.end(1);
-                        
-                        diagnostics.add(new Diagnostic(
-                            Diagnostic.Severity.ERROR,
-                            "Undefined function: " + callName,
-                            lineNum + 1,
-                            callMatcher.start(1) + 1,
-                            startOffset,
-                            endOffset
-                        ));
+                        // Check if it's undefined
+                        if (!KEYWORDS.contains(callName) && 
+                            !STDLIB_FUNCTIONS.contains(callName) &&
+                            !declaredFunctions.contains(callName) &&
+                            callName.matches("^[a-z].*")) { // starts with lowercase
+                            
+                            int startOffset = lineOffset + callMatcher.start(1);
+                            int endOffset = lineOffset + callMatcher.end(1);
+                            
+                            diagnostics.add(new Diagnostic(
+                                Diagnostic.Severity.ERROR,
+                                "Undefined function: " + callName,
+                                lineNum + 1,
+                                callMatcher.start(1) + 1,
+                                startOffset,
+                                endOffset
+                            ));
+                        }
                     }
                 }
             }
