@@ -46,18 +46,24 @@ public class KotlinAnalyzer {
                 String line = lines[lineNum];
                 int lineOffset = getLineOffset(lines, lineNum);
                 
-                // Extract variable declarations
-                Matcher varMatcher = VAR_PATTERN.matcher(line);
-                while (varMatcher.find()) {
-                    String varName = varMatcher.group(2);
-                    declaredVariables.put(varName, lineOffset + varMatcher.start(2));
-                }
+                // Skip comment lines
+                String trimmedLine = line.trim();
+                boolean isComment = trimmedLine.startsWith("//");
                 
-                // Extract function declarations
-                Matcher funMatcher = FUN_PATTERN.matcher(line);
-                while (funMatcher.find()) {
-                    String funName = funMatcher.group(1);
-                    declaredFunctions.add(funName);
+                if (!isComment) {
+                    // Extract variable declarations
+                    Matcher varMatcher = VAR_PATTERN.matcher(line);
+                    while (varMatcher.find()) {
+                        String varName = varMatcher.group(2);
+                        declaredVariables.put(varName, lineOffset + varMatcher.start(2));
+                    }
+                    
+                    // Extract function declarations
+                    Matcher funMatcher = FUN_PATTERN.matcher(line);
+                    while (funMatcher.find()) {
+                        String funName = funMatcher.group(1);
+                        declaredFunctions.add(funName);
+                    }
                 }
             }
             
