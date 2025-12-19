@@ -5,7 +5,7 @@ val usedVar = 10
 println("Used variable: $usedVar")
 
 // There should be a red line that underlines unclosed string
-//val broken = "unclosed string
+//val broken = "unclosed string"
 //println("Is the string finally closed? $broken")
 
 
