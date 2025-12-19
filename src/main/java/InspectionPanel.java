@@ -7,13 +7,6 @@ import java.util.*;
 import java.util.List;
 
 public class InspectionPanel extends JPanel {
-    // Color constants
-    private static final Color BACKGROUND_DARK = new Color(60, 63, 65);
-    private static final Color TABLE_BACKGROUND = new Color(43, 43, 43);
-    private static final Color GRID_COLOR = new Color(80, 80, 80);
-    private static final Color SELECTION_BACKGROUND = new Color(75, 110, 175);
-    private static final Color TITLE_COLOR = new Color(200, 200, 200);
-    
     private JTable inspectionTable;
     private InspectionTableModel tableModel;
     private JLabel statusLabel;
@@ -23,7 +16,7 @@ public class InspectionPanel extends JPanel {
         this.editorPane = editorPane;
         
         setLayout(new BorderLayout());
-        setBackground(BACKGROUND_DARK);
+        setBackground(ColorPalette.BACKGROUND_DARK);
         
         initComponents();
     }
@@ -40,10 +33,10 @@ public class InspectionPanel extends JPanel {
         inspectionTable = new JTable(tableModel);
         
         // Dark theme styling
-        inspectionTable.setBackground(TABLE_BACKGROUND);
+        inspectionTable.setBackground(ColorPalette.TABLE_BACKGROUND);
         inspectionTable.setForeground(Color.WHITE);
-        inspectionTable.setGridColor(GRID_COLOR);
-        inspectionTable.setSelectionBackground(SELECTION_BACKGROUND);
+        inspectionTable.setGridColor(ColorPalette.GRID_COLOR);
+        inspectionTable.setSelectionBackground(ColorPalette.SELECTION_BACKGROUND);
         inspectionTable.setSelectionForeground(Color.WHITE);
         inspectionTable.setFont(new Font("Monospaced", Font.PLAIN, 12));
         inspectionTable.setRowHeight(25);
@@ -64,7 +57,7 @@ public class InspectionPanel extends JPanel {
                 
                 // Dark theme colors
                 if (!isSelected) {
-                    label.setBackground(TABLE_BACKGROUND);
+                    label.setBackground(ColorPalette.TABLE_BACKGROUND);
                     label.setForeground(Color.WHITE);
                 }
                 
@@ -105,8 +98,8 @@ public class InspectionPanel extends JPanel {
         });
         
         JScrollPane scrollPane = new JScrollPane(inspectionTable);
-        scrollPane.setBorder(new LineBorder(GRID_COLOR));
-        scrollPane.getViewport().setBackground(TABLE_BACKGROUND);
+        scrollPane.setBorder(new LineBorder(ColorPalette.GRID_COLOR));
+        scrollPane.getViewport().setBackground(ColorPalette.TABLE_BACKGROUND);
         
         // Layout
         add(statusLabel, BorderLayout.NORTH);
@@ -114,12 +107,12 @@ public class InspectionPanel extends JPanel {
         
         // Border with title
         TitledBorder border = BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(GRID_COLOR),
+            BorderFactory.createLineBorder(ColorPalette.GRID_COLOR),
             "Inspections",
             TitledBorder.LEFT,
             TitledBorder.TOP,
             new Font("Arial", Font.BOLD, 12),
-            TITLE_COLOR
+                ColorPalette.TITLE_COLOR
         );
         setBorder(border);
     }

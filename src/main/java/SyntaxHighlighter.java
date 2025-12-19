@@ -36,7 +36,7 @@ public class SyntaxHighlighter {
         StyleConstants.setForeground(defaultStyle, Color.WHITE);
 
         keywordStyle = textPane.addStyle("Keyword", null);
-        StyleConstants.setForeground(keywordStyle, Color.BLUE);
+        StyleConstants.setForeground(keywordStyle, Color.ORANGE);
         StyleConstants.setBold(keywordStyle, true);
 
         commentStyle = textPane.addStyle("Comment", null);
