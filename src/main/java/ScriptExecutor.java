@@ -7,14 +7,12 @@ import java.util.concurrent.*;
 
 public class ScriptExecutor {
 
-    // Observer/Callback Pattern !!!
     public interface OutputListener {
         void onOutput(String line);
         void onError(String line);
         void onComplete(int exitCode);
     }
 
-    // we need a temporary file in which kotlin script is written because we need it to pass it to kotlin compiler (kotlinc)
     private static final String SCRIPT_FILE = "tmp.kts";
 
     private String scriptContent;
@@ -31,7 +29,6 @@ public class ScriptExecutor {
 
     public void start() {
         running = true;
-        
         new Thread(() -> {
             try {
                 execute();
@@ -46,16 +43,13 @@ public class ScriptExecutor {
         int exitCode = -1;
 
         try {
-            // Write script to temporary file
             File scriptFile = writeScriptToFile();
             String scriptPath = scriptFile.getAbsolutePath();
 
-            // Spawn new process so we can pass temporary script file to kotlin compiler
             ProcessBuilder pb = new ProcessBuilder();
             pb.command("cmd.exe", "/c", "kotlinc", "-script", scriptPath);
 
             // Set working directory to temporary OS folder
-            // On windows java.io.tmpdir will evaluate to C:\Users\<username>\AppData\Local\Temp
             pb.directory(new File(System.getProperty("java.io.tmpdir")));
 
             pb.redirectErrorStream(false);
@@ -121,26 +115,20 @@ public class ScriptExecutor {
 
     public void stop() {
         running = false;
-        
-        if (process != null && process.isAlive()) {
+        if (process != null && process.isAlive())
             process.destroyForcibly();
-        }
-        
+
         cleanup();
     }
 
     private void cleanup() {
-        if (executor != null && !executor.isShutdown()) {
+        if (executor != null && !executor.isShutdown())
             executor.shutdownNow();
-        }
 
-        // Clean up temporary script file in temp directory
         try {
             String tempDir = System.getProperty("java.io.tmpdir");
             File scriptFile = new File(tempDir, SCRIPT_FILE);
             Files.deleteIfExists(scriptFile.toPath());
-        } catch (IOException e) {
-            // Ignore cleanup errors
-        }
+        } catch (IOException e) {}
     }
 }

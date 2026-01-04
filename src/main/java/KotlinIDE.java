@@ -239,7 +239,6 @@ public class KotlinIDE extends JFrame {
     }
 
     private void attachListeners() {
-        // As user types the script we need to update the lines and do backend analysis
         editorPane.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
@@ -266,8 +265,6 @@ public class KotlinIDE extends JFrame {
     
     private void triggerAnalysis() {
         String code = editorPane.getText();
-        
-        // Analyze asynchronously
         kotlinAnalyzer.analyzeAsync(code, result -> {
             SwingUtilities.invokeLater(() -> {
                 inspectionPanel.updateInspections(result);
@@ -295,7 +292,6 @@ public class KotlinIDE extends JFrame {
         outputPane.setText("");
         appendToOutput(">>> Starting script execution...\n\n", stdoutStyle);
 
-        // Create and start script executor
         scriptExecutor = new ScriptExecutor(scriptContent, new ScriptExecutor.OutputListener() {
             @Override
             public void onOutput(String line) {
