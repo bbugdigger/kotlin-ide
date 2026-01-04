@@ -14,25 +14,20 @@ public class InspectionPanel extends JPanel {
     
     public InspectionPanel(JTextPane editorPane) {
         this.editorPane = editorPane;
-        
         setLayout(new BorderLayout());
         setBackground(ColorPalette.BACKGROUND_DARK);
-        
         initComponents();
     }
     
     private void initComponents() {
-        // Status label showing counts
         statusLabel = new JLabel(" No issues");
         statusLabel.setFont(new Font("Arial", Font.BOLD, 12));
         statusLabel.setForeground(Color.WHITE);
         statusLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
         
-        // Table for inspections
         tableModel = new InspectionTableModel();
         inspectionTable = new JTable(tableModel);
         
-        // Dark theme styling
         inspectionTable.setBackground(ColorPalette.TABLE_BACKGROUND);
         inspectionTable.setForeground(Color.WHITE);
         inspectionTable.setGridColor(ColorPalette.GRID_COLOR);
@@ -42,18 +37,15 @@ public class InspectionPanel extends JPanel {
         inspectionTable.setRowHeight(25);
         inspectionTable.setShowGrid(true);
         
-        // Column widths
         inspectionTable.getColumnModel().getColumn(0).setPreferredWidth(30);  // Severity
         inspectionTable.getColumnModel().getColumn(1).setPreferredWidth(50);  // Line
         inspectionTable.getColumnModel().getColumn(2).setPreferredWidth(300); // Message
         
-        // Custom cell renderer for icons and colors
+        // Custom cell renderer
         inspectionTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                JLabel label = (JLabel) super.getTableCellRendererComponent(
-                    table, value, isSelected, hasFocus, row, column);
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 
                 // Dark theme colors
                 if (!isSelected) {
@@ -61,11 +53,11 @@ public class InspectionPanel extends JPanel {
                     label.setForeground(Color.WHITE);
                 }
                 
-                // Icon column
+                // Severity column
                 if (column == 0) {
                     Diagnostic diag = tableModel.getDiagnosticAt(row);
                     if (diag != null) {
-                        label.setText(getIconForSeverity(diag.getSeverity()));
+                        label.setText(getMessageForSeverity(diag.getSeverity()));
                         label.setHorizontalAlignment(SwingConstants.CENTER);
                     }
                 }
@@ -117,7 +109,7 @@ public class InspectionPanel extends JPanel {
         setBorder(border);
     }
     
-    private String getIconForSeverity(Diagnostic.Severity severity) {
+    private String getMessageForSeverity(Diagnostic.Severity severity) {
         switch (severity) {
             case ERROR:   return "ERROR";
             case WARNING: return "WARNING";
@@ -127,9 +119,9 @@ public class InspectionPanel extends JPanel {
     
     private Color getColorForSeverity(Diagnostic.Severity severity) {
         switch (severity) {
-            case ERROR:   return Color.RED;   // Red
-            case WARNING: return Color.YELLOW;   // Orange
-            default:      return Color.WHITE; // Default light gray
+            case ERROR:   return Color.RED;
+            case WARNING: return Color.YELLOW;
+            default:      return Color.WHITE;
         }
     }
     
@@ -149,7 +141,7 @@ public class InspectionPanel extends JPanel {
         
         if (errors == 0 && warnings == 0) {
             statusLabel.setText("No issues found");
-            statusLabel.setForeground(Color.GREEN); // Green
+            statusLabel.setForeground(Color.GREEN);
         } else {
             StringBuilder sb = new StringBuilder(" ");
             if (errors > 0) {
@@ -170,64 +162,41 @@ public class InspectionPanel extends JPanel {
     }
     
     private void navigateToIssue(Diagnostic diag) {
-        try {
-            // Calculate offset from line and column
-            String text = editorPane.getText();
-            String[] lines = text.split("\n", -1);
-            
-            int line = diag.getLine();
-            int column = diag.getColumn();
-            
-            if (line < 1 || line > lines.length) {
-                return;
-            }
-            
-            // Calculate offset
-            int offset = 0;
-            for (int i = 0; i < line - 1; i++) {
-                offset += lines[i].length() + 1; // +1 for newline
-            }
-            offset += Math.max(0, Math.min(column - 1, lines[line - 1].length()));
-            
-            // Set caret position and highlight
-            editorPane.setCaretPosition(offset);
-            editorPane.requestFocusInWindow();
-            
-            // Highlight the line briefly
-            highlightLine(line);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+        String text = editorPane.getText();
+        String[] lines = text.split("\n", -1);
+
+        int line = diag.getLine();
+        int column = diag.getColumn();
+
+        if (line < 1 || line > lines.length)
+            return;
+
+        int offset = 0;
+        for (int i = 0; i < line - 1; i++) {
+            offset += lines[i].length() + 1;
         }
+        offset += Math.max(0, Math.min(column - 1, lines[line - 1].length()));
+
+        editorPane.setCaretPosition(offset);
+        editorPane.requestFocusInWindow();
+
+        highlightLine(line);
     }
     
     private void highlightLine(int lineNumber) {
-        try {
-            String text = editorPane.getText();
-            String[] lines = text.split("\n", -1);
-            
-            if (lineNumber < 1 || lineNumber > lines.length) {
-                return;
-            }
-            
-            int offset = 0;
-            for (int i = 0; i < lineNumber - 1; i++) {
-                offset += lines[i].length() + 1;
-            }
-            
-            final int finalOffset = offset;
-            int lineLength = lines[lineNumber - 1].length();
-            
-            editorPane.select(offset, offset + lineLength);
-            
-            // Remove selection after 1 second
-            javax.swing.Timer timer = new javax.swing.Timer(1000, e -> editorPane.select(finalOffset, finalOffset));
-            timer.setRepeats(false);
-            timer.start();
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+        String text = editorPane.getText();
+        String[] lines = text.split("\n", -1);
+
+        if (lineNumber < 1 || lineNumber > lines.length)
+            return;
+
+        int offset = 0;
+        for (int i = 0; i < lineNumber - 1; i++) {
+            offset += lines[i].length() + 1;
         }
+
+        int lineLength = lines[lineNumber - 1].length();
+        editorPane.select(offset, offset + lineLength);
     }
     
     /**
@@ -235,19 +204,13 @@ public class InspectionPanel extends JPanel {
      */
     private static class InspectionTableModel extends AbstractTableModel {
         private List<Diagnostic> diagnostics = new ArrayList<>();
-        private final String[] columnNames = {"", "Line", "Message"};
+        private final String[] columnNames = {"Severity", "Line", "Message"};
         
         public void setDiagnostics(List<Diagnostic> diagnostics) {
             this.diagnostics = new ArrayList<>(diagnostics);
             
             // Sort by severity (errors first) then by line
-            this.diagnostics.sort((a, b) -> {
-                int severityCompare = a.getSeverity().compareTo(b.getSeverity());
-                if (severityCompare != 0) {
-                    return severityCompare;
-                }
-                return Integer.compare(a.getLine(), b.getLine());
-            });
+            this.diagnostics.sort(Comparator.comparing(Diagnostic::getSeverity).thenComparingInt(Diagnostic::getLine));
             
             fireTableDataChanged();
         }
@@ -287,14 +250,14 @@ public class InspectionPanel extends JPanel {
             
             Diagnostic diag = diagnostics.get(row);
             switch (column) {
-                case 0: return getIconForSeverity(diag.getSeverity());
+                case 0: return getMessageForSeverity(diag.getSeverity());
                 case 1: return String.valueOf(diag.getLine());
                 case 2: return diag.getMessage();
                 default: return "";
             }
         }
         
-        private String getIconForSeverity(Diagnostic.Severity severity) {
+        private String getMessageForSeverity(Diagnostic.Severity severity) {
             switch (severity) {
                 case ERROR:   return "ERROR";
                 case WARNING: return "WARNING";

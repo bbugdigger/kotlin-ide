@@ -12,15 +12,12 @@ import java.util.List;
 public class CodeHighlighter {
     private final JTextPane textPane;
     
-    // Underline painters
     private UnderlineHighlightPainter errorPainter;
     private UnderlineHighlightPainter warningPainter;
     private List<Object> underlineHighlights = new ArrayList<>();
     
     public CodeHighlighter(JTextPane textPane) {
         this.textPane = textPane;
-        
-        // Initialize underline painters
         errorPainter = new UnderlineHighlightPainter(Color.RED);
         warningPainter = new UnderlineHighlightPainter(Color.YELLOW);
     }
