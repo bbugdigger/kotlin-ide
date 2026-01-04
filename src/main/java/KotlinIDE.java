@@ -355,21 +355,15 @@ public class KotlinIDE extends JFrame {
             String text = doc.getText(0, doc.getLength());
             int lineStart = text.lastIndexOf('\n', offset - 1) + 1;
             int lineEnd = text.indexOf('\n', offset);
-            if (lineEnd == -1) {
-                lineEnd = text.length();
-            }
-            
             String line = text.substring(lineStart, lineEnd);
             
-            // Check if the line matches error pattern (e.g., "tmp.kts:5:10")
             Matcher matcher = ERROR_LOCATION_PATTERN.matcher(line);
             if (matcher.find()) {
                 int errorLine = Integer.parseInt(matcher.group(2));
                 int errorColumn = Integer.parseInt(matcher.group(3));
-                
                 navigateToPosition(errorLine, errorColumn);
             }
-        } catch (Exception ex) {
+        } catch (BadLocationException ex) {
             // Ignore clicks that don't match error pattern
         }
     }
@@ -379,47 +373,21 @@ public class KotlinIDE extends JFrame {
             String text = editorPane.getText();
             String[] lines = text.split("\n", -1);
             
-            if (line < 1 || line > lines.length) {
+            if (line < 1 || line > lines.length)
                 return;
-            }
-            
+
             // Calculate offset
             int offset = 0;
             for (int i = 0; i < line - 1; i++) {
-                offset += lines[i].length() + 1; // +1 for newline
+                offset += lines[i].length() + 1; // +1 for "\n" character
             }
             offset += Math.max(0, Math.min(column - 1, lines[line - 1].length()));
             
-            // Set caret position and scroll to it
             editorPane.setCaretPosition(offset);
             editorPane.requestFocusInWindow();
-            
-            // Highlight the line briefly
-            highlightErrorLine(line);
-            
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-    
-    private void highlightErrorLine(int lineNumber) {
-        try {
-            String text = editorPane.getText();
-            String[] lines = text.split("\n", -1);
-            
-            if (lineNumber < 1 || lineNumber > lines.length) {
-                return;
-            }
-            
-            int offset = 0;
-            for (int i = 0; i < lineNumber - 1; i++) {
-                offset += lines[i].length() + 1;
-            }
-            
-            final int finalOffset = offset;
-            int lineLength = lines[lineNumber - 1].length();
-            
-            editorPane.select(offset, offset + lineLength);
+
+            int lineLength = lines[line - 1].length();
+            editorPane.select(offset, offset + lineLength); //Highlight the line
         } catch (Exception ex) {
             ex.printStackTrace();
         }
