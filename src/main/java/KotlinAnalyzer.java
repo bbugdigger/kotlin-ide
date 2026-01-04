@@ -201,12 +201,10 @@ public class KotlinAnalyzer {
     }
     
     public void analyzeAsync(String code, Consumer<AnalysisResult> callback) {
-        // Cancel previous timer
         if (analysisTimer != null && analysisTimer.isRunning()) {
             analysisTimer.stop();
         }
         
-        // Create new debounced timer
         analysisTimer = new Timer(ANALYSIS_DELAY_MS, e -> {
             executorService.submit(() -> {
                 try {
@@ -219,15 +217,6 @@ public class KotlinAnalyzer {
             });
         });
         analysisTimer.start();
-    }
-    
-    public void shutdown() {
-        if (analysisTimer != null) {
-            analysisTimer.stop();
-        }
-        if (executorService != null) {
-            executorService.shutdown();
-        }
     }
 }
 
