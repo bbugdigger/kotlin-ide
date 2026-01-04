@@ -79,9 +79,6 @@ public class SyntaxHighlighter {
             try {
                 String text = document.getText(0, document.getLength());
 
-                // Save caret position
-                int caretPosition = textPane.getCaretPosition();
-
                 // Reset all to default style
                 document.setCharacterAttributes(0, text.length(), defaultStyle, true);
 
@@ -93,9 +90,6 @@ public class SyntaxHighlighter {
 
                 // Highlight keywords (but check they're not in strings/comments)
                 highlightKeywords(text);
-
-                // Restore caret position
-                textPane.setCaretPosition(Math.min(caretPosition, text.length()));
             } catch (BadLocationException ex) {
                 ex.printStackTrace();
             }
